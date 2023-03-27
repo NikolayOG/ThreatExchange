@@ -2,10 +2,10 @@ all:
 	echo >&2 "Must specify target."
 
 package:
-	python3 ./setup.py sdist bdist_wheel
+	CXXFLAGS="-mmacosx-version-min=10.9" CFLAGS='-stdlib=libc++' python3 ./setup.py sdist bdist_wheel
 
 local_install:
-	python3 -m pip install -e .[all]
+	CXXFLAGS='-mmacosx-version-min=10.9' CFLAGS='-stdlib=libc++' LDFLAGS='-mmacosx-version-min=10.9' python3 -m pip install -e .[all]
 
 test:
 	python3 -m pytest
