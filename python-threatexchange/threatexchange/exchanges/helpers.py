@@ -10,6 +10,7 @@ reproduce databases of signals, as well as simple recipes for stage.
 from dataclasses import dataclass, field
 import logging
 import typing as t
+import dbm
 from threatexchange.exchanges.signal_exchange_api import TSignalExchangeAPICls
 
 from threatexchange.signal_type.signal_base import SignalType
@@ -96,8 +97,9 @@ class SimpleFetchedStateStore(fetch_state.FetchedStateStoreBase):
 
     def _get_state(self, collab: CollaborationConfigBase) -> _StateTracker:
         if collab.name not in self._state:
-            logging.debug("Loading state for %s", collab.name)
+            logging.info("Loading state for %s", collab.name)
             delta = self._read_state(collab.name)
+            logging.info(delta)
             self._state[collab.name] = _StateTracker(self.api_cls, delta)
         return self._state[collab.name]
 
@@ -145,3 +147,55 @@ class SimpleFetchedStateStore(fetch_state.FetchedStateStoreBase):
                 if by_signal:
                     ret[collab.name] = by_signal
         return ret
+    
+    def exists() -> bool:
+         raise NotImplementedError
+
+    
+class DBMState(fetch_state.FetchedStateStoreBase):
+    def __init__(
+        self,
+        api_cls: TSignalExchangeAPICls,
+    ) -> None:
+        self.api_cls = api_cls
+
+    def get_checkpoint(
+        self, collab: CollaborationConfigBase
+    ) -> t.Optional[fetch_state.FetchCheckpointBase]:
+        """
+        Returns the last checkpoint passed to merge() after a flush()
+        """
+        print("CALL get_checkpoint", collab)
+        raise NotImplementedError
+
+    def merge(self, collab: CollaborationConfigBase, delta: fetch_state.FetchDelta) -> None:
+        """
+        Merge a FetchDelta into the state.
+
+        At the implementation's discretion, it may call flush() or the
+        equivalent work.
+        """
+        print("CALL merge", collab, delta)
+        raise NotImplementedError
+
+    def flush(self) -> None:
+        """
+        Finish writing the results of previous merges to persistant state.
+
+        This should also persist the checkpoint.
+        """
+        print("CALL flush")
+        raise NotImplementedError
+
+    def clear(self, collab: CollaborationConfigBase) -> None:
+        """
+        Delete all the stored state for this collaboration.
+        """
+        print("CALL clear ", collab)
+        raise NotImplementedError
+
+    def get_for_signal_type(
+        self, collabs: t.List[CollaborationConfigBase], signal_type: t.Type[SignalType]
+    ) -> t.Dict[str, t.Dict[str, fetch_state.FetchedSignalMetadata]]:
+        print("CALL get_for_signal_type ", collabs, signal_type)
+        raise NotImplementedError

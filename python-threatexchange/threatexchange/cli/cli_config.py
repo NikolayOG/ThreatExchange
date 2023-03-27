@@ -32,6 +32,8 @@ from threatexchange.interface_validation import FunctionalityMapping
 from threatexchange.cli.cli_state import CliSimpleState, CliIndexStore
 from threatexchange.utils import dataclass_json
 
+from threatexchange.exchanges.helpers import DBMState
+
 
 CONFIG_FILENAME = "config.json"
 
@@ -199,6 +201,7 @@ class _FetchStoreAccessor:
         )
 
     def get_for_api(self, api: t.Type[SignalExchangeAPI]) -> CliSimpleState:
+        print("get_for_api")
         return CliSimpleState(api, self._parent._state.dir_for_fetched_state(api))
 
     def get_for_collab(

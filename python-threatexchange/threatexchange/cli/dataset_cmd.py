@@ -164,6 +164,7 @@ class DatasetCommand(command_base.Command):
         self.csv = csv
 
     def execute(self, settings: CLISettings) -> None:
+        print("HI FROM START", settings)
         if settings.fetched_state.empty():
             if not settings.in_demo_mode:
                 raise CommandError("No stored state available. Do you need to fetch?")
@@ -224,6 +225,8 @@ class DatasetCommand(command_base.Command):
             ] = {}
             for collabs_for_store in collab_by_api.values():
                 store = settings.fetched_state.get_for_collab(collabs_for_store[0])
+                print("collabs for store", collabs_for_store)
+                print("STORE", store)
                 by_collab = store.get_for_signal_type(collabs_for_store, s_type)
                 for collab, signals in by_collab.items():
                     for signal, record in signals.items():

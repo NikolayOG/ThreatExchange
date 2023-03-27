@@ -125,6 +125,7 @@ class FetchCommand(command_base.Command):
         return time.time() > self.checkpoint_every + self.last_checkpoint_time
 
     def execute(self, settings: CLISettings) -> None:
+        print("HELLO FROM FETCH CMD")
         # Verify collab arguments
         self.collabs = settings.get_all_collabs()
         if self.only_collab:

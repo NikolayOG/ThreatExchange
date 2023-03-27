@@ -101,10 +101,11 @@ class CliSimpleState(helpers.SimpleFetchedStateStore):
     def __init__(
         self, api_cls: t.Type[SignalExchangeAPI], fetched_state_dir: pathlib.Path
     ) -> None:
+        print("WHAT IS THE FETCH STATE?? ", fetched_state_dir)
         super().__init__(api_cls)
         self.dir = fetched_state_dir
 
-    def collab_file(self, collab_name: str) -> pathlib.Path:
+    def _collab_file(self, collab_name: str) -> pathlib.Path:
         """The file location for collaboration state"""
         return self.dir / f"{collab_name}.state.pickle"
 
@@ -115,12 +116,13 @@ class CliSimpleState(helpers.SimpleFetchedStateStore):
         This usually means that state is available, but the file could also be
         corrupt or unparsable.
         """
-        return self.collab_file(collab.name).is_file()
+        print("THIS IS CHECKED?")
+        return self._collab_file(collab.name).is_file()
 
     def clear(self, collab: CollaborationConfigBase) -> None:
         """Delete a collaboration and its state directory"""
         super().clear(collab)
-        file = self.collab_file(collab.name)
+        file = self._collab_file(collab.name)
         if file.is_file():
             logging.info("Removing %s", file)
             file.unlink(missing_ok=True)
@@ -133,7 +135,7 @@ class CliSimpleState(helpers.SimpleFetchedStateStore):
         self,
         collab_name: str,
     ) -> t.Optional[FetchDeltaTyped]:
-        file = self.collab_file(collab_name)
+        file = self._collab_file(collab_name)
         if not file.is_file():
             return None
         try:
@@ -160,7 +162,7 @@ class CliSimpleState(helpers.SimpleFetchedStateStore):
         collab_name: str,
         delta: FetchDeltaTyped,
     ) -> None:
-        file = self.collab_file(collab_name)
+        file = self._collab_file(collab_name)
         if not file.parent.exists():
             file.parent.mkdir(parents=True)
 

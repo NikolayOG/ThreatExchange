@@ -293,3 +293,10 @@ class FetchedStateStoreBase(ABC):
         sense.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def exists(self, collab: CollaborationConfigBase) -> bool:
+        """
+        Check if collab exists in storage
+        """
+        raise NotImplementedError
